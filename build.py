@@ -8,9 +8,11 @@ import base64
 SRC_JS = [
     'src/js/vendors~osweb.bundle.js',
     'src/js/osweb.bundle.js',
-    'src/js/run-standalone.js'
 ]
-SRC_TMPL = 'src/html/index-standalone.tmpl.html'
+JS_STANDALONE = 'src/js/run-standalone.js'
+JS_JATOS = 'src/js/run-jatos.js'
+TMPL_STANDALONE = 'src/html/index-standalone.tmpl.html'
+TMPL_JATOS = 'src/html/index-jatos.tmpl.html'
 DST_DIR = 'public_html'
 
 
@@ -28,14 +30,16 @@ def b64(path):
         return e.decode()
 
 
-def build(src_osexp, fullscreen, log_url, dest):
+def build(src_osexp, fullscreen, log_url, dest, jatos):
 
-    print('Building {}\nfullscreen: {}\nlog_url: {}'.format(
-        src_osexp, fullscreen, log_url
+    print('Building {}\nfullscreen: {}\nlog_url: {}\njatos: {}'.format(
+        src_osexp, fullscreen, log_url, jatos
     ))
-    js = '\n'.join([read(path) for path in SRC_JS])
+    src_js = SRC_JS + [JS_JATOS if jatos else JS_STANDALONE]
+    tmpl = TMPL_JATOS if jatos else TMPL_STANDALONE
+    js = '\n'.join([read(path) for path in src_js])
     html = (
-        read(SRC_TMPL).format(
+        read(tmpl).format(
             javascript=js,
             osexp_blob=b64(src_osexp)
         )
@@ -49,7 +53,7 @@ def build(src_osexp, fullscreen, log_url, dest):
         os.mkdir(DST_DIR)
     with open(os.path.join(DST_DIR, dest), 'w') as fd:
         fd.write(html)
-    print('Successfully built in {}'.format(DST_DIR))
+    print('Successfully built as {}'.format(os.path.join(DST_DIR, dest)))
 
 
 def parse_cmdline():
@@ -65,7 +69,8 @@ def parse_cmdline():
         '--fullscreen',
         dest='fullscreen',
         action='store_const',
-        const=True, default=False,
+        const=True,
+        default=False,
         help='Fullscreen mode'
     )
     parser.add_argument(
@@ -82,8 +87,16 @@ def parse_cmdline():
         default='index.html',
         help='The name of the HTML file to be generated in public_html'
     )
+    parser.add_argument(
+        '--jatos',
+        metavar='jatos',
+        action='store_const',
+        const=True,
+        default=False,
+        help='Indicates that the output file should be made for JATOS'
+    )
     args = parser.parse_args()
-    return args.osexp, args.fullscreen, args.log_url, args.dest
+    return args.osexp, args.fullscreen, args.log_url, args.dest, args.jatos
 
 
 if __name__ == '__main__':

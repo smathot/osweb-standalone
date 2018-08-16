@@ -13,7 +13,9 @@ This repository contains a simple script that packages the OSWeb runtime and an 
 ## Usage
 
 ~~~
-usage: build.py [-h] [--fullscreen] [--log_url log_url] [--dest dest] osexp
+usage: build.py [-h] [--fullscreen] [--log_url log_url] [--dest dest]
+                [--jatos]
+                osexp
 
 Build an osweb experiment
 
@@ -25,6 +27,7 @@ optional arguments:
   --fullscreen       Fullscreen mode
   --log_url log_url  A url for data logging
   --dest dest        The name of the HTML file to be generated in public_html
+  --jatos            Indicates that the output file should be made for JATOS
 ~~~
 
 ## Logging
