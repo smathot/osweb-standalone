@@ -1,27 +1,48 @@
-var context = {
+let context = {
 	confirm: null,
 	debug: false,
 	fullScreen: {fullscreen},
-	introClick: true,
-	introScreen: true,
+	introClick: false,
+	introScreen: false,
 	mimetype: '',
 	name: 'ovp',
 	onLog: onLogHandler,
 	prompt: null,
 	scaleMode: 'exactFit',
-	source: '{osexp}',
+	source: null,
 	subject: 0,
 	target: null
 };
 
-var log_url = {log_url};
+let log_url = {log_url}
 
 /**
- * Launches the experiment on page load.
+ * Converts base-64-encoded data to a File object, which can be passed to
+ * osweb as an experiment file
+ **/
+function URItoFile(uri) {
+  let byteCharacters = atob(uri.split(',')[1])
+  let byteArrays = []
+  for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+    let slice = byteCharacters.slice(offset, offset + 512);
+    let byteNumbers = new Array(slice.length)
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i)
+    }
+    let byteArray = new Uint8Array(byteNumbers)
+    byteArrays.push(byteArray)
+  }
+  let blob = new Blob(byteArrays)
+  return new File([blob], "osexp_src")
+}
+
+/**
+ * Is called on page load to launch the experiment
  */
 function run_experiment() {
-	var runner = osweb.getRunner('osweb_div');
-	runner.run(context);
+	context.source = URItoFile(document.getElementById('osexp_src').src)
+	let runner = osweb.getRunner('osweb_div')
+	runner.run(context)
 }
 
 /**
@@ -30,12 +51,12 @@ function run_experiment() {
  */
 function onLogHandler(data) {
 	if (data === null) {
-		return;
+		return
 	}
 	if (log_url === null) {
-		console.log(data);
+		console.log(data)
 	} else {
-		console.log('Logging');
-		document.getElementById('log_frame').src = log_url + escape(JSON.stringify(data)) + '\n';
+		console.log('Logging')
+		document.getElementById('log_frame').src = log_url + escape(JSON.stringify(data)) + '\n'
 	}
 }
