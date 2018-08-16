@@ -8,12 +8,12 @@ OSWeb is an online runtime for OpenSesame experiments:
 
 - <https://github.com/shyras/osweb/>
 
-This repository contains a simple script that packages the OSWeb runtime into a standalone `index.html` plus a `.osexp` file with the experiment.
+This repository contains a simple script that packages the OSWeb runtime and an experiment into a standalone `.html` file that can be loaded directly into a browser.
 
 ## Usage
 
 ~~~
-usage: build.py [-h] [--fullscreen] [--log_url log_url] osexp
+usage: build.py [-h] [--fullscreen] [--log_url log_url] [--dest dest] osexp
 
 Build an osweb experiment
 
@@ -24,7 +24,13 @@ optional arguments:
   -h, --help         show this help message and exit
   --fullscreen       Fullscreen mode
   --log_url log_url  A url for data logging
+  --dest dest        The name of the HTML file to be generated in public_html
 ~~~
+
+## Logging
+
+If you specify a log url, this will be called every time that the `logger` item is executed. The to-be-logged variables are simply appended as a JSON string to the URL.
+
 
 ## License
 
