@@ -5,7 +5,7 @@ let context = {
 	introClick: false,
 	introScreen: false,
 	mimetype: '',
-	name: 'ovp',
+	name: 'osweb',
 	onLog: onLogHandler,
 	prompt: null,
 	scaleMode: 'exactFit',

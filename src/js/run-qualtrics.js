@@ -62,8 +62,9 @@ function onLogHandler(data) {
  * @param {Object} sessionData - The session data.
  */
 function onFinishedHandler(data, sessionData) {
-		jatos.submitResultData(taskData, jatos.startNextComponent)
-    document.getElementById("osweb_div").style.display = "none"
+  Qualtrics.SurveyEngine.setEmbeddedData('taskdata', taskData)
+  document.getElementById("osweb_div").style.display = "none"
+  Qualtrics.SurveyEngine.Page.pageButtons.showNextButton()
 }
 
-jatos.onLoad(run_experiment)
+Qualtrics.SurveyEngine.addOnload(run_experiment)

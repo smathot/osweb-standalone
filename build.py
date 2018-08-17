@@ -6,13 +6,15 @@ import argparse
 import base64
 
 SRC_JS = [
-    'src/js/vendors~osweb.bundle.js',
-    'src/js/osweb.bundle.js',
+    'src/js/vendors~osweb.3e1e018192e3bf0e173a.bundle.js',
+    'src/js/osweb.66c60ad5c703deb9270f.bundle.js',
 ]
 JS_STANDALONE = 'src/js/run-standalone.js'
 JS_JATOS = 'src/js/run-jatos.js'
+JS_QUALTRICS = 'src/js/run-qualtrics.js'
 TMPL_STANDALONE = 'src/html/index-standalone.tmpl.html'
 TMPL_JATOS = 'src/html/index-jatos.tmpl.html'
+TMPL_QUALTRICS = 'src/html/index-qualtrics.tmpl.html'
 DST_DIR = 'public_html'
 
 
@@ -30,13 +32,24 @@ def b64(path):
         return e.decode()
 
 
-def build(src_osexp, fullscreen, log_url, dest, jatos):
+def build(src_osexp, fullscreen, log_url, output, dest):
 
-    print('Building {}\nfullscreen: {}\nlog_url: {}\njatos: {}'.format(
-        src_osexp, fullscreen, log_url, jatos
+    print(
+        'Building {}\nfullscreen: {}\nlog_url: {}\ndest: {}'.format(
+        src_osexp, fullscreen, log_url, dest
     ))
-    src_js = SRC_JS + [JS_JATOS if jatos else JS_STANDALONE]
-    tmpl = TMPL_JATOS if jatos else TMPL_STANDALONE
+    if dest == 'standalone':
+        src_js = SRC_JS + [JS_STANDALONE]
+        tmpl = TMPL_STANDALONE
+    elif dest == 'jatos':
+        src_js = SRC_JS + [JS_JATOS]
+        tmpl = TMPL_JATOS
+    elif dest == 'qualtrics':
+        raise NotImplementedError('qualtrics is not yet supported')
+    else:
+        raise ValueError(
+            'Invalid --dest, should be standalone, jatos, or qualtrics'
+        )
     js = '\n'.join([read(path) for path in src_js])
     html = (
         read(tmpl).format(
@@ -51,9 +64,9 @@ def build(src_osexp, fullscreen, log_url, dest, jatos):
     )
     if not os.path.exists(DST_DIR):
         os.mkdir(DST_DIR)
-    with open(os.path.join(DST_DIR, dest), 'w') as fd:
+    with open(os.path.join(DST_DIR, output), 'w') as fd:
         fd.write(html)
-    print('Successfully built as {}'.format(os.path.join(DST_DIR, dest)))
+    print('Successfully built as {}'.format(os.path.join(DST_DIR, output)))
 
 
 def parse_cmdline():
@@ -81,22 +94,20 @@ def parse_cmdline():
         help='A url for data logging'
     )
     parser.add_argument(
-        '--dest',
-        metavar='dest',
+        '--output',
+        metavar='output',
         type=str,
         default='index.html',
         help='The name of the HTML file to be generated in public_html'
     )
     parser.add_argument(
-        '--jatos',
-        metavar='jatos',
-        action='store_const',
-        const=True,
-        default=False,
-        help='Indicates that the output file should be made for JATOS'
+        '--dest',
+        metavar='dest',
+        default='standalone',
+        help='standalone, jatos, or qualtrics'
     )
     args = parser.parse_args()
-    return args.osexp, args.fullscreen, args.log_url, args.dest, args.jatos
+    return args.osexp, args.fullscreen, args.log_url, args.output, args.dest
 
 
 if __name__ == '__main__':
