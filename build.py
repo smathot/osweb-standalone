@@ -7,7 +7,7 @@ import base64
 
 SRC_JS = [
     'src/js/vendors~osweb.3e1e018192e3bf0e173a.bundle.js',
-    'src/js/osweb.66c60ad5c703deb9270f.bundle.js',
+    'src/js/osweb.20a92f5c1765bcca4346.bundle.js',
 ]
 JS_STANDALONE = 'src/js/run-standalone.js'
 JS_JATOS = 'src/js/run-jatos.js'
