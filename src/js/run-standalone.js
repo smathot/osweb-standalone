@@ -1,20 +1,23 @@
 let context = {
-	confirm: null,
+	confirm: onConfirm,
 	debug: false,
 	fullScreen: {fullscreen},
 	introClick: false,
-	introScreen: false,
+	introScreen: true,
 	mimetype: '',
 	name: 'osweb',
 	onLog: onLogHandler,
+	onFinished: onFinishedHandler,
 	prompt: null,
 	scaleMode: 'exactFit',
 	source: null,
-	subject: 0,
+	subject: {subject},
 	target: null
 };
 
 let log_url = {log_url}
+let runner = null
+
 
 /**
  * Converts base-64-encoded data to a File object, which can be passed to
@@ -41,7 +44,7 @@ function URItoFile(uri) {
  */
 function run_experiment() {
 	context.source = URItoFile(document.getElementById('osexp_src').src)
-	let runner = osweb.getRunner('osweb_div')
+	runner = osweb.getRunner('osweb_div')
 	runner.run(context)
 }
 
@@ -59,4 +62,18 @@ function onLogHandler(data) {
 		console.log('Logging')
 		document.getElementById('log_frame').src = log_url + escape(JSON.stringify(data)) + '\n'
 	}
+}
+
+/** Callback function for processing after an experiment is finished.
+ * @param {Object} data - The result data.
+ * @param {Object} sessionData - The session data.
+ */
+function onFinishedHandler(data, sessionData) {
+    document.getElementById("osweb_div").style.display = "none"
+}
+
+/** Callback function for handling Escape key presses
+ */
+function onConfirm() {
+	runner.exit()
 }

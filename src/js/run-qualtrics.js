@@ -3,7 +3,7 @@ let context = {
 	debug: false,
 	fullScreen: {fullscreen},
 	introClick: false,
-	introScreen: false,
+	introScreen: true,
 	mimetype: '',
 	name: 'osweb',
 	onLog: onLogHandler,
@@ -11,7 +11,7 @@ let context = {
 	prompt: null,
 	scaleMode: 'exactFit',
 	source: null,
-	subject: 0,
+	subject: {subject},
 	target: null
 };
 

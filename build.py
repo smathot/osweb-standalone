@@ -32,12 +32,23 @@ def b64(path):
         return e.decode()
 
 
-def build(src_osexp, fullscreen, log_url, output, dest):
+def build(src_osexp, fullscreen, log_url, output, dest, subject):
 
     print(
-        'Building {}\nfullscreen: {}\nlog_url: {}\ndest: {}'.format(
-        src_osexp, fullscreen, log_url, dest
-    ))
+        'Building {}\nfullscreen: {}\nlog_url: {}\ndest: {}\nsubject: {}'
+        .format(src_osexp, fullscreen, log_url, dest, subject)
+    )
+    # Determine subject number code. This is a list of subject numbers, followed
+    # by a random choice, like so:
+    # [10, 11, 12][Math.floor(Math.random()*3)]
+    try:
+        subjects = [int(s) for s in subject.split(',')]
+    except ValueError:
+        raise ValueError('Subject numbers should be integers')
+    subject_code = '{}[Math.floor(Math.random()*{})]'.format(
+        subjects, len(subjects)
+    )
+    # Determine JS template
     if dest == 'standalone':
         src_js = SRC_JS + [JS_STANDALONE]
         tmpl = TMPL_STANDALONE
@@ -51,6 +62,7 @@ def build(src_osexp, fullscreen, log_url, output, dest):
             'Invalid --dest, should be standalone, jatos, or qualtrics'
         )
     js = '\n'.join([read(path) for path in src_js])
+    # Fill in the templates
     html = (
         read(tmpl).format(
             javascript=js,
@@ -61,7 +73,9 @@ def build(src_osexp, fullscreen, log_url, output, dest):
             '{log_url}',
             'null' if not log_url else '\'{}\''.format(log_url)
         )
+        .replace('{subject}', subject_code)
     )
+    # Write the output file
     if not os.path.exists(DST_DIR):
         os.mkdir(DST_DIR)
     with open(os.path.join(DST_DIR, output), 'w') as fd:
@@ -106,8 +120,24 @@ def parse_cmdline():
         default='standalone',
         help='standalone, jatos, or qualtrics'
     )
+    parser.add_argument(
+        '--subject',
+        metavar='subject',
+        type=str,
+        default='0',
+        help=
+            'A comma-separated list of subject numbers. One subject number is '
+            'randomly chosen.'
+    )
     args = parser.parse_args()
-    return args.osexp, args.fullscreen, args.log_url, args.output, args.dest
+    return (
+        args.osexp,
+        args.fullscreen,
+        args.log_url,
+        args.output,
+        args.dest,
+        args.subject
+    )
 
 
 if __name__ == '__main__':

@@ -13,21 +13,21 @@ This repository contains a simple script that packages the OSWeb runtime and an 
 ## Usage
 
 ~~~
-usage: build.py [-h] [--fullscreen] [--log_url log_url] [--output output]
-                [--dest dest]
-                osexp
+[--dest dest] [--subject subject]
+osexp
 
 Build an osweb experiment
 
 positional arguments:
-  osexp              An osexp file
+osexp              An osexp file
 
 optional arguments:
-  -h, --help         show this help message and exit
-  --fullscreen       Fullscreen mode
-  --log_url log_url  A url for data logging
-  --output output    The name of the HTML file to be generated in public_html
-  --dest dest        standalone, jatos, or qualtrics
+-h, --help         show this help message and exit
+--fullscreen       Fullscreen mode
+--log_url log_url  A url for data logging
+--output output    The name of the HTML file to be generated in public_html
+--dest dest        standalone, jatos, or qualtrics
+--subject subject  A comma-separated list of subject numbers. One subject
 ~~~
 
 ## Logging
